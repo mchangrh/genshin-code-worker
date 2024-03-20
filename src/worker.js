@@ -4,7 +4,12 @@ const dateRegex = new RegExp(/\n\t-->\|([\d-]+)(?:\|([\d-]+))?<!--/)
 const codeURL = "https://genshin-impact.fandom.com/wiki/Promotional_Code?action=raw"
 
 const getCodes = async () => {
-  const body = await fetch(codeURL).then(response => response.text())
+  const body = await fetch(codeURL, {
+    cf: {
+      cacheTtl: 86400,
+      cacheEverything: true
+    }
+  }).then(response => response.text())
   const comboRegex = new RegExp(codeRegex.source + detailsRegex.source + dateRegex.source, "g")
   const now = new Date()
   const codeArray = []
