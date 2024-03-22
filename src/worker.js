@@ -1,6 +1,6 @@
 const codeRegex = new RegExp(/\n\t-->\|(.+)\|(?:A|G|NA)<!--/)
 const detailsRegex = new RegExp(/\n\t-->\|(.+?)<!--/)
-const dateRegex = new RegExp(/\n\t-->\|([\d-]+)(?:\|([\d-]+))?<!--/)
+const dateRegex = new RegExp(/\n\t-->\|([\d-]+)(?:\|([\d-]+))?(?:\|indef)?<!--/)
 const codeURL = "https://genshin-impact.fandom.com/wiki/Promotional_Code?action=raw"
 
 const getCodes = async () => {
@@ -11,21 +11,23 @@ const getCodes = async () => {
     }
   }).then(response => response.text())
   const comboRegex = new RegExp(codeRegex.source + detailsRegex.source + dateRegex.source, "g")
-  const now = new Date()
-  const codeArray = []
-  const allMatches = body.matchAll(comboRegex)
-  for (const match of allMatches) {
-    const code = {
-      code: match[1],
-      description: match[2],
-      discovery: match[3],
-      expiry: match[4]
-    }
-    if (!code?.expiry) codeArray.push(code)
-    else {
-      const expiry = new Date(code.expiry)
-      if (expiry > now) codeArray.push(code)
-    }
+  // match all codes
+  const allCodes = []
+  let codeArray = []
+  for (const match of body.matchAll(comboRegex)) {
+    const multiCodeSplit = match[1].split(";")
+    multiCodeSplit.forEach((splitCode) => {
+      // if there are multiple codes, reply with multiple
+      allCodes.push({
+        code: splitCode,
+        description: match[2],
+        discovery: match[3],
+        expiry: match[4],
+        link: `https://genshin.hoyoverse.com/en/gift?code=${splitCode}`
+      })
+    })
+    // remove codes that have expired
+    codeArray = allCodes.filter(code => (!code.expiry) || (new Date(code.expiry) > new Date()))
   }
   return JSON.stringify(codeArray, null, 2)
 }
