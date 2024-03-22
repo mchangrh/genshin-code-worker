@@ -11,7 +11,8 @@ a JSON payload similar to the following:
     "code": "8SJSDSX68UF9",
     "description": "Mora*8,888;Clearwater Jade*5;Encompassing Gladness*2;Bountiful Year*2",
     "discovery": "2024-02-09",
-    "expiry": "2024-02-24"
+    "expiry": "2024-02-24",
+    "link": "https://genshin.hoyoverse.com/en/gift?code=8SJSDSX68UF9"
   }
 ]
 ```
